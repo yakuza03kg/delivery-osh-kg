@@ -2,6 +2,11 @@
 
 return [
 
+    'maps' => [
+        'provider' => env('ROUTE_PROVIDER', '2gis'),
+        'key' => env('MAPS_API_KEY'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
