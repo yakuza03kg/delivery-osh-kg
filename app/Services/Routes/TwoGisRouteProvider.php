@@ -22,18 +22,26 @@ final class TwoGisRouteProvider implements RouteProvider
         return '2gis';
     }
 
-    public function geocode(string $address): GeocodedAddress
+    public function geocode(string $address, ?Coordinate $near = null): GeocodedAddress
     {
         $this->ensureConfigured();
 
         try {
-            $response = $this->request()->get($this->catalogUrl, [
+            $parameters = [
                 'q' => $address,
                 'fields' => 'items.point,items.geometry.centroid,items.full_address_name,items.address_name',
                 'page_size' => 1,
-                'locale' => config('app.locale', 'ru_RU'),
+                'locale' => config('delivery.two_gis.locale'),
                 'key' => $this->apiKey,
-            ]);
+            ];
+
+            if ($near) {
+                $parameters['point'] = $near->longitude.','.$near->latitude;
+                $parameters['radius'] = config('delivery.two_gis.search_radius');
+                $parameters['sort'] = 'distance';
+            }
+
+            $response = $this->request()->get($this->catalogUrl, $parameters);
 
             if (! $response->successful()) {
                 throw new RouteProviderException('2GIS не принял запрос геокодирования.');
@@ -71,7 +79,7 @@ final class TwoGisRouteProvider implements RouteProvider
         $this->ensureConfigured();
 
         try {
-            $response = $this->request()->post($this->routingUrl, [
+            $response = $this->request()->post($this->routingUrl.'?key='.urlencode((string) $this->apiKey), [
                 'points' => [[
                     [
                         'type' => 'stop',
@@ -86,7 +94,7 @@ final class TwoGisRouteProvider implements RouteProvider
                 ]],
                 'transport' => 'driving',
                 'output' => 'summary',
-                'locale' => config('app.locale', 'ru_RU'),
+                'locale' => config('delivery.two_gis.routing_locale'),
                 'route_mode' => 'fastest',
                 'traffic_mode' => 'jam',
             ]);

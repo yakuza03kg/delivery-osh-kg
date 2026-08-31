@@ -1,66 +1,80 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Курьер KG
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Мобильное Laravel-приложение для расчёта стоимости доставки: курьер выбирает заведение, вводит адрес клиента и получает расстояние по автомобильному маршруту и итоговую цену.
 
-## About Laravel
+## Что реализовано
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Роли администратора и курьера.
+- Управление заведениями, пользователями и тарифами.
+- Тарифы: цена за километр, первые N километров + доплата, фиксированные зоны и лимит цены.
+- История расчётов со снимком тарифа, курьера и заведения на момент расчёта.
+- Кэш адресов и маршрутов в БД.
+- Заменяемый `RouteProvider`: официальный 2GIS, Nominatim/OSRM или локальный демо-режим.
+- Адаптивный интерфейс для телефона.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Первый запуск
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. Настройте подключение MySQL в `.env`.
+2. Выполните миграции и загрузите демонстрационные данные:
 
-## Learning Laravel
+```powershell
+php artisan migrate --seed
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. Соберите интерфейс:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```powershell
+npm run build
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+4. Запустите приложение:
 
-## Laravel Sponsors
+```powershell
+php artisan serve
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Тестовые учётные записи после `--seed`:
 
-### Premium Partners
+| Роль | Email | Пароль |
+| --- | --- | --- |
+| Администратор | `admin@example.com` | `password` |
+| Курьер | `courier@example.com` | `password` |
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Карта и маршруты
 
-## Contributing
+Для локального просмотра в текущем `.env` включён `ROUTE_PROVIDER=demo`. Он принимает координаты клиента в поле адреса в формате `42.8746, 74.5698` и строит только ориентировочное расстояние.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Для реальных расчётов подключите официальный 2GIS:
 
-## Code of Conduct
+```dotenv
+ROUTE_PROVIDER=2gis
+MAPS_API_KEY=ваш_ключ_2gis
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Подробное сравнение вариантов, актуальные квоты и ограничения: [docs/route-providers.md](docs/route-providers.md).
 
-## Security Vulnerabilities
+## Проверка
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```powershell
+php artisan test
+```
 
-## License
+## Docker
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Запуск всего приложения вместе с отдельной MySQL:
+
+```powershell
+docker compose up --build -d
+```
+
+После запуска откройте [http://localhost:8081](http://localhost:8081). Контейнер приложения сам применяет миграции и добавляет тестовые учётные записи. Остановить контейнеры можно командой:
+
+```powershell
+docker compose down
+```
+
+Данные MySQL сохраняются в Docker volume `courier-kg_mysql-data`. Для использования 2GIS передайте ключ при запуске или задайте его в окружении: `MAPS_API_KEY=ваш_ключ`, `ROUTE_PROVIDER=2gis`.
+
+## Railway
+
+Инструкция по публикации с отдельной базой MySQL: [docs/railway.md](docs/railway.md).

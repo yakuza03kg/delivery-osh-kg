@@ -7,6 +7,7 @@ use App\Models\Tariff;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class TariffController extends Controller
@@ -32,7 +33,7 @@ class TariffController extends Controller
             $this->saveZones($tariff, $data['zones']);
 
             if ($tariff->is_active) {
-                Tariff::query()->whereKeyNot($tariff->id)->update(['is_active' => false]);
+                Tariff::query()->where('id', '!=', $tariff->id)->update(['is_active' => false]);
             }
         });
 
@@ -56,7 +57,7 @@ class TariffController extends Controller
             $this->saveZones($tariff, $data['zones']);
 
             if ($tariff->is_active) {
-                Tariff::query()->whereKeyNot($tariff->id)->update(['is_active' => false]);
+                Tariff::query()->where('id', '!=', $tariff->id)->update(['is_active' => false]);
             }
         });
 
@@ -96,18 +97,36 @@ class TariffController extends Controller
             ->filter(fn (array $zone): bool => $zone['from_km'] !== null || $zone['to_km'] !== null || $zone['price'] !== null)
             ->values();
 
+        $messages = [];
+
+        if ($validated['mode'] === Tariff::MODE_PER_KM && ($validated['price_per_km'] ?? null) === null) {
+            $messages['price_per_km'] = 'Укажите стоимость за километр.';
+        }
+
+        if ($validated['mode'] === Tariff::MODE_PROGRESSIVE) {
+            foreach (['base_km', 'base_price', 'additional_price_per_km'] as $field) {
+                if (($validated[$field] ?? null) === null) {
+                    $messages[$field] = 'Заполните все поля прогрессивного тарифа.';
+                }
+            }
+        }
+
         if ($validated['mode'] === Tariff::MODE_ZONES && $zones->isEmpty()) {
-            abort(422, 'Добавьте хотя бы одну тарифную зону.');
+            $messages['zones'] = 'Добавьте хотя бы одну тарифную зону.';
         }
 
         foreach ($zones as $zone) {
             if ($zone['from_km'] === null || $zone['price'] === null) {
-                abort(422, 'Для каждой зоны укажите начало диапазона и цену.');
+                $messages['zones'] = 'Для каждой зоны укажите начало диапазона и цену.';
             }
 
             if ($zone['to_km'] !== null && (float) $zone['to_km'] < (float) $zone['from_km']) {
-                abort(422, 'Конец зоны не может быть меньше её начала.');
+                $messages['zones'] = 'Конец зоны не может быть меньше её начала.';
             }
+        }
+
+        if ($messages !== []) {
+            throw ValidationException::withMessages($messages);
         }
 
         return [

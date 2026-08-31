@@ -6,7 +6,7 @@ interface RouteProvider
 {
     public function name(): string;
 
-    public function geocode(string $address): GeocodedAddress;
+    public function geocode(string $address, ?Coordinate $near = null): GeocodedAddress;
 
     public function route(Coordinate $origin, Coordinate $destination): RouteResult;
 }

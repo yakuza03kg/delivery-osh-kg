@@ -52,6 +52,10 @@ class UserController extends Controller
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 
+        if ($user->isAdmin() && $validated['role'] !== 'admin' && User::query()->where('role', 'admin')->count() <= 1) {
+            return back()->withInput()->withErrors(['role' => 'В системе должен остаться хотя бы один администратор.']);
+        }
+
         if (blank($validated['password'] ?? null)) {
             unset($validated['password']);
         } else {

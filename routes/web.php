@@ -9,6 +9,8 @@ use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\HistoryController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/health', fn () => response()->json(['status' => 'ok']))->name('health');
+
 Route::get('/', function () {
     return auth()->check()
         ? redirect()->route('delivery.create')

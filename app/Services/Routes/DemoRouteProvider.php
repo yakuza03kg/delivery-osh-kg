@@ -11,7 +11,7 @@ final class DemoRouteProvider implements RouteProvider
         return 'demo';
     }
 
-    public function geocode(string $address): GeocodedAddress
+    public function geocode(string $address, ?Coordinate $near = null): GeocodedAddress
     {
         if (! preg_match('/^\s*(-?[0-9]+(?:[.,][0-9]+)?)\s*[,; ]\s*(-?[0-9]+(?:[.,][0-9]+)?)\s*$/u', $address, $matches)) {
             throw new RouteProviderException('Демо-режим принимает координаты клиента в формате: 42.8746, 74.5698. Для адресов подключите 2GIS или OSRM.');

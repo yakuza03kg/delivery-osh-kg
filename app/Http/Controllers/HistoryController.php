@@ -29,11 +29,11 @@ class HistoryController extends Controller
         }
 
         if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->string('date_from'));
+            $query->whereDate('created_at', '>=', $request->input('date_from'));
         }
 
         if ($request->filled('date_to')) {
-            $query->whereDate('created_at', '<=', $request->string('date_to'));
+            $query->whereDate('created_at', '<=', $request->input('date_to'));
         }
 
         return view('history.index', [

@@ -36,6 +36,7 @@ final class DeliveryCalculationService
         }
 
         $provider = $this->routeProvider;
+        $origin = new Coordinate((float) $branch->latitude, (float) $branch->longitude);
         $normalizedAddress = $this->normalize($customerAddress);
         $addressHash = hash('sha256', $provider->name().'|'.$normalizedAddress);
         $addressCache = AddressCache::query()->where('query_hash', $addressHash)->first();
@@ -47,7 +48,7 @@ final class DeliveryCalculationService
                 $addressCache->provider,
             );
         } else {
-            $geocoded = $provider->geocode($customerAddress);
+            $geocoded = $provider->geocode($customerAddress, $origin);
             AddressCache::query()->updateOrCreate(
                 ['query_hash' => $addressHash],
                 [
@@ -60,7 +61,6 @@ final class DeliveryCalculationService
             );
         }
 
-        $origin = new Coordinate((float) $branch->latitude, (float) $branch->longitude);
         $routeHash = hash('sha256', implode('|', [
             $provider->name(),
             $this->coordinateKey($origin),

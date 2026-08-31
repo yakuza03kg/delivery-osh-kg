@@ -22,7 +22,7 @@ final class NominatimOsrmRouteProvider implements RouteProvider
         return 'nominatim_osrm';
     }
 
-    public function geocode(string $address): GeocodedAddress
+    public function geocode(string $address, ?Coordinate $near = null): GeocodedAddress
     {
         try {
             $response = $this->request()->withHeaders([

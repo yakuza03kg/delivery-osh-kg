@@ -42,19 +42,17 @@
 
         <div class="mode-section" data-mode-section="per_km">
             <div class="section-heading inline-heading"><h2>Стоимость</h2><span class="tag tag-muted">пример: 100 сом / км</span></div>
-            <div class="form-grid form-grid-3">
+            <div class="form-grid">
                 <label class="field"><span>Цена за 1 км, сом</span><input type="number" step="0.01" min="0" name="price_per_km" value="{{ old('price_per_km', $tariff->price_per_km) }}" placeholder="100"></label>
-                <label class="field"><span>Максимальная цена, сом</span><input type="number" step="0.01" min="0" name="max_price" value="{{ old('max_price', $tariff->max_price) }}" placeholder="Без лимита"></label>
             </div>
         </div>
 
         <div class="mode-section" data-mode-section="progressive">
             <div class="section-heading inline-heading"><h2>Ступени тарифа</h2><span class="tag tag-muted">пример: 200 сом за первые 2 км</span></div>
-            <div class="form-grid form-grid-4">
+            <div class="form-grid form-grid-3">
                 <label class="field"><span>Первые, км</span><input type="number" step="0.01" min="0" name="base_km" value="{{ old('base_km', $tariff->base_km) }}" placeholder="2"></label>
                 <label class="field"><span>Цена первых, сом</span><input type="number" step="0.01" min="0" name="base_price" value="{{ old('base_price', $tariff->base_price) }}" placeholder="200"></label>
                 <label class="field"><span>Следующий км, сом</span><input type="number" step="0.01" min="0" name="additional_price_per_km" value="{{ old('additional_price_per_km', $tariff->additional_price_per_km) }}" placeholder="100"></label>
-                <label class="field"><span>Максимум, сом</span><input type="number" step="0.01" min="0" name="max_price" value="{{ old('max_price', $tariff->max_price) }}" placeholder="1000"></label>
             </div>
         </div>
 
@@ -72,6 +70,13 @@
                         <button class="remove-zone" type="button" aria-label="Удалить зону">×</button>
                     </div>
                 @endforeach
+            </div>
+        </div>
+
+        <div class="mode-section">
+            <div class="section-heading inline-heading"><h2>Ограничение стоимости</h2><span class="tag tag-muted">необязательно</span></div>
+            <div class="form-grid">
+                <label class="field"><span>Максимальная цена, сом</span><input type="number" step="0.01" min="0" name="max_price" value="{{ old('max_price', $tariff->max_price) }}" placeholder="Без лимита"></label>
             </div>
         </div>
 

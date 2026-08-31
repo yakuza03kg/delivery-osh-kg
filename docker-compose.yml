@@ -1,0 +1,57 @@
+name: courier-kg
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8000"
+    environment:
+      APP_NAME: "Курьер KG"
+      APP_ENV: local
+      APP_KEY: ${APP_KEY:-base64:CMPXArCzAcZJgLse9GcKmBu84hf/TgNxcbvjPQXG5gw=}
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8081
+      LOG_CHANNEL: stderr
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: courier_kg
+      DB_USERNAME: courier
+      DB_PASSWORD: courier_password
+      CACHE_DRIVER: file
+      SESSION_DRIVER: file
+      QUEUE_CONNECTION: sync
+      ROUTE_PROVIDER: ${ROUTE_PROVIDER:-demo}
+      MAPS_API_KEY: ${MAPS_API_KEY:-}
+      DELIVERY_CURRENCY: KGS
+      ROUTE_HTTP_TIMEOUT: 8
+      TWO_GIS_LOCALE: ru_KG
+      TWO_GIS_ROUTING_LOCALE: en
+      TWO_GIS_SEARCH_RADIUS: 50000
+      NOMINATIM_USER_AGENT: "Courier KG delivery calculator/1.0"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: courier_kg
+      MYSQL_USER: courier
+      MYSQL_PASSWORD: courier_password
+      MYSQL_ROOT_PASSWORD: root_password_change_me
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
