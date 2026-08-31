@@ -61,6 +61,39 @@ class DeliveryCalculationTest extends TestCase
         $this->assertSame('Бишкек, ул. Курманжан Датка, 25', $calculation->resolved_address);
     }
 
+    public function test_guest_can_calculate_delivery_without_an_account(): void
+    {
+        $branch = Branch::query()->create([
+            'name' => 'Ош',
+            'address' => 'Ош, Алишер Навои 3',
+            'latitude' => 40.523,
+            'longitude' => 72.782,
+            'is_active' => true,
+        ]);
+        Tariff::query()->create([
+            'name' => 'Стандарт',
+            'mode' => Tariff::MODE_PER_KM,
+            'price_per_km' => 100,
+            'rounding' => 'none',
+            'is_active' => true,
+        ]);
+
+        $this->app->instance(RouteProvider::class, new TestRouteProvider());
+
+        $response = $this->post(route('delivery.store'), [
+            'branch_id' => $branch->id,
+            'customer_address' => 'Ош, Шота Руставели 2',
+        ]);
+
+        $response->assertRedirect(route('delivery.create'));
+        $this->assertDatabaseHas('delivery_calculations', [
+            'user_id' => null,
+            'courier_name' => 'Гость',
+            'branch_id' => $branch->id,
+            'price' => 540,
+        ]);
+    }
+
     public function test_courier_cannot_open_admin_panel(): void
     {
         $courier = User::query()->create([

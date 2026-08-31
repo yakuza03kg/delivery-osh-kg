@@ -23,7 +23,7 @@ final class DeliveryCalculationService
     ) {
     }
 
-    public function calculate(User $user, Branch $branch, string $customerAddress): DeliveryCalculation
+    public function calculate(?User $user, Branch $branch, string $customerAddress): DeliveryCalculation
     {
         if (! $branch->hasCoordinates()) {
             throw new RouteProviderException('У выбранного заведения не указаны координаты. Обратитесь к администратору.');
@@ -96,10 +96,10 @@ final class DeliveryCalculationService
         $price = $this->tariffService->calculate($tariff, $distanceKm);
 
         return DB::transaction(fn (): DeliveryCalculation => DeliveryCalculation::query()->create([
-            'user_id' => $user->id,
+            'user_id' => $user?->id,
             'branch_id' => $branch->id,
             'tariff_id' => $tariff->id,
-            'courier_name' => $user->name,
+            'courier_name' => $user?->name ?? 'Гость',
             'branch_name' => $branch->name,
             'branch_address' => $branch->address,
             'customer_address' => $customerAddress,

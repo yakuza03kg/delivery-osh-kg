@@ -20,19 +20,25 @@
 
             <nav class="main-nav" aria-label="Основная навигация">
                 <a class="nav-link {{ request()->routeIs('delivery.*') ? 'is-active' : '' }}" href="{{ route('delivery.create') }}">Расчёт</a>
-                <a class="nav-link {{ request()->routeIs('history.*') ? 'is-active' : '' }}" href="{{ route('history.index') }}">История</a>
-                @if(auth()->user()->isAdmin())
-                    <a class="nav-link {{ request()->routeIs('admin.*') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">Админ-панель</a>
-                @endif
+                @auth
+                    <a class="nav-link {{ request()->routeIs('history.*') ? 'is-active' : '' }}" href="{{ route('history.index') }}">История</a>
+                    @if(auth()->user()->isAdmin())
+                        <a class="nav-link {{ request()->routeIs('admin.*') ? 'is-active' : '' }}" href="{{ route('admin.dashboard') }}">Админ-панель</a>
+                    @endif
+                @endauth
             </nav>
 
             <div class="account-menu">
-                <span class="account-name">{{ auth()->user()->name }}</span>
-                <span class="role-badge">{{ auth()->user()->isAdmin() ? 'Администратор' : 'Курьер' }}</span>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button class="button button-ghost button-small" type="submit">Выйти</button>
-                </form>
+                @auth
+                    <span class="account-name">{{ auth()->user()->name }}</span>
+                    <span class="role-badge">{{ auth()->user()->isAdmin() ? 'Администратор' : 'Курьер' }}</span>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button class="button button-ghost button-small" type="submit">Выйти</button>
+                    </form>
+                @else
+                    <a class="button button-ghost button-small" href="{{ route('login') }}">Вход администратора</a>
+                @endauth
             </div>
         </header>
 

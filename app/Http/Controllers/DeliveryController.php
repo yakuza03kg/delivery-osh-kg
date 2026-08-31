@@ -19,21 +19,26 @@ class DeliveryController extends Controller
     {
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
-        $user = request()->user();
+        $user = $request->user();
         $calculation = null;
 
         if ($calculationId = session('calculation_id')) {
-            $calculation = DeliveryCalculation::query()
-                ->where('id', $calculationId)
-                ->where('user_id', $user->id)
-                ->first();
+            $query = DeliveryCalculation::query()->where('id', $calculationId);
+
+            if ($user) {
+                $query->where('user_id', $user->id);
+            } else {
+                $query->whereNull('user_id');
+            }
+
+            $calculation = $query->first();
         }
 
         return view('delivery.create', [
             'branches' => Branch::query()->active()->orderBy('name')->get(),
-            'recentCalculations' => $user->calculations()->latest()->limit(5)->get(),
+            'recentCalculations' => $user?->calculations()->latest()->limit(5)->get() ?? collect(),
             'activeTariff' => Tariff::query()->active()->withCount('zones')->first(),
             'provider' => app(RouteProvider::class),
             'calculation' => $calculation,
@@ -62,6 +67,6 @@ class DeliveryController extends Controller
         return redirect()
             ->route('delivery.create')
             ->with('calculation_id', $calculation->id)
-            ->with('success', 'Расчёт сохранён в истории.');
+            ->with('success', $request->user() ? 'Расчёт сохранён в истории.' : 'Расчёт готов.');
     }
 }

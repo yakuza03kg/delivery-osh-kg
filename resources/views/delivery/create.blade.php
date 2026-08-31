@@ -3,7 +3,7 @@
 @section('content')
     <div class="page-heading heading-with-action">
         <div>
-            <p class="eyebrow">Рабочий экран курьера</p>
+            <p class="eyebrow">Расчёт доставки</p>
             <h1>Рассчитать доставку</h1>
             <p>Выберите точку отправления и укажите адрес клиента.</p>
         </div>
@@ -99,7 +99,7 @@
                 <section class="empty-result card">
                     <div class="empty-icon">⌖</div>
                     <h2>Здесь появится результат</h2>
-                    <p>После расчёта расстояние, стоимость и время маршрута будут сохранены в истории.</p>
+                    <p>После расчёта здесь появятся расстояние, стоимость и время маршрута.</p>
                 </section>
             @endif
 
@@ -117,44 +117,46 @@
         </aside>
     </div>
 
-    <section class="section-block">
-        <div class="section-heading">
-            <div>
-                <p class="eyebrow">Последние операции</p>
-                <h2>Мои расчёты</h2>
-            </div>
-            <a class="text-link" href="{{ route('history.index') }}">Вся история →</a>
-        </div>
-
-        @if($recentCalculations->isEmpty())
-            <div class="card empty-list">Расчётов пока нет.</div>
-        @else
-            <div class="card table-card">
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Адрес клиента</th>
-                            <th>Заведение</th>
-                            <th>Расстояние</th>
-                            <th>Стоимость</th>
-                            <th>Время</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($recentCalculations as $item)
-                            <tr>
-                                <td><strong>{{ $item->customer_address }}</strong><small>{{ $item->resolved_address }}</small></td>
-                                <td>{{ $item->branch_name }}</td>
-                                <td>{{ number_format($item->distance_km, 1, ',', ' ') }} км</td>
-                                <td class="price-cell">{{ number_format($item->price, 0, ',', ' ') }} сом</td>
-                                <td>{{ $item->created_at->format('d.m.Y H:i') }}</td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
+    @auth
+        <section class="section-block">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Последние операции</p>
+                    <h2>Мои расчёты</h2>
                 </div>
+                <a class="text-link" href="{{ route('history.index') }}">Вся история →</a>
             </div>
-        @endif
-    </section>
+
+            @if($recentCalculations->isEmpty())
+                <div class="card empty-list">Расчётов пока нет.</div>
+            @else
+                <div class="card table-card">
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Адрес клиента</th>
+                                <th>Заведение</th>
+                                <th>Расстояние</th>
+                                <th>Стоимость</th>
+                                <th>Время</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($recentCalculations as $item)
+                                <tr>
+                                    <td><strong>{{ $item->customer_address }}</strong><small>{{ $item->resolved_address }}</small></td>
+                                    <td>{{ $item->branch_name }}</td>
+                                    <td>{{ number_format($item->distance_km, 1, ',', ' ') }} км</td>
+                                    <td class="price-cell">{{ number_format($item->price, 0, ',', ' ') }} сом</td>
+                                    <td>{{ $item->created_at->format('d.m.Y H:i') }}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            @endif
+        </section>
+    @endauth
 @endsection
