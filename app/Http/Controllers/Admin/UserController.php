@@ -28,7 +28,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'role' => ['required', 'in:admin,courier'],
+            'role' => ['required', 'in:admin,super_admin,courier'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
         $validated['password'] = Hash::make($validated['password']);
@@ -48,12 +48,16 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'role' => ['required', 'in:admin,courier'],
+            'role' => ['required', 'in:admin,super_admin,courier'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 
-        if ($user->isAdmin() && $validated['role'] !== 'admin' && User::query()->where('role', 'admin')->count() <= 1) {
+        if ($user->isAdmin() && ! in_array($validated['role'], ['admin', 'super_admin'], true) && User::query()->whereIn('role', ['admin', 'super_admin'])->count() <= 1) {
             return back()->withInput()->withErrors(['role' => 'В системе должен остаться хотя бы один администратор.']);
+        }
+
+        if ($user->isSuperAdmin() && $validated['role'] !== 'super_admin' && User::query()->where('role', 'super_admin')->count() <= 1) {
+            return back()->withInput()->withErrors(['role' => 'В системе должен остаться хотя бы один супер-администратор.']);
         }
 
         if (blank($validated['password'] ?? null)) {
@@ -71,6 +75,10 @@ class UserController extends Controller
     {
         if ($user->is($request->user())) {
             return back()->withErrors(['user' => 'Нельзя удалить собственную учётную запись.']);
+        }
+
+        if ($user->isSuperAdmin() && User::query()->where('role', 'super_admin')->count() <= 1) {
+            return back()->withErrors(['user' => 'Нельзя удалить последнего супер-администратора.']);
         }
 
         $user->delete();

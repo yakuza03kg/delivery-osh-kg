@@ -17,7 +17,7 @@ class AdminApiUsageTest extends TestCase
             'name' => 'Администратор',
             'email' => 'admin@example.com',
             'password' => 'password',
-            'role' => 'admin',
+            'role' => 'super_admin',
         ]);
 
         $response = $this->actingAs($admin)->put(route('admin.api-usage.update'), [
@@ -44,5 +44,29 @@ class AdminApiUsageTest extends TestCase
             'baseline_used' => 22,
             'requests_used' => 0,
         ]);
+    }
+
+    public function test_regular_admin_can_view_but_cannot_change_2gis_counters(): void
+    {
+        $admin = User::query()->create([
+            'name' => 'Администратор',
+            'email' => 'admin@example.com',
+            'password' => 'password',
+            'role' => 'admin',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.api-usage.index'))
+            ->assertOk()
+            ->assertSee('Синхронизация ограничена');
+
+        $this->actingAs($admin)
+            ->put(route('admin.api-usage.update'), [
+                'geocoder_quota_limit' => 1,
+                'geocoder_baseline_used' => 0,
+                'routing_quota_limit' => 1,
+                'routing_baseline_used' => 0,
+            ])
+            ->assertForbidden();
     }
 }

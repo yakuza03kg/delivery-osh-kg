@@ -31,7 +31,7 @@
             <div class="account-menu">
                 @auth
                     <span class="account-name">{{ auth()->user()->name }}</span>
-                    <span class="role-badge">{{ auth()->user()->isAdmin() ? 'Администратор' : 'Курьер' }}</span>
+                    <span class="role-badge">{{ auth()->user()->roleLabel() }}</span>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button class="button button-ghost button-small" type="submit">Выйти</button>

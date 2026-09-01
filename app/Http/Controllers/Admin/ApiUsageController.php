@@ -15,10 +15,11 @@ class ApiUsageController extends Controller
     {
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
         return view('admin.api-usage.index', [
             'counters' => $this->apiUsageService->twoGisCounters()->keyBy('service'),
+            'canEdit' => $request->user()->isSuperAdmin(),
         ]);
     }
 

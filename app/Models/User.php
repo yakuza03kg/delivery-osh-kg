@@ -46,7 +46,12 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return in_array($this->role, ['admin', 'super_admin'], true);
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
     }
 
     public function isCourier(): bool
@@ -57,5 +62,14 @@ class User extends Authenticatable
     public function calculations()
     {
         return $this->hasMany(DeliveryCalculation::class);
+    }
+
+    public function roleLabel(): string
+    {
+        return match ($this->role) {
+            'super_admin' => 'Супер-администратор',
+            'admin' => 'Администратор',
+            default => 'Курьер',
+        };
     }
 }
