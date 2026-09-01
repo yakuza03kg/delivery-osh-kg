@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 class DeliveryCalculation extends Model
 {
@@ -73,5 +74,15 @@ class DeliveryCalculation extends Model
         $minutes = max(1, (int) ceil($this->duration_seconds / 60));
 
         return $minutes.' мин';
+    }
+
+    public function localizedCreatedAt(): ?Carbon
+    {
+        return $this->created_at?->copy()->setTimezone(config('delivery.timezone'));
+    }
+
+    public function formattedCreatedAt(string $format = 'd.m.Y H:i'): string
+    {
+        return $this->localizedCreatedAt()?->format($format) ?? '';
     }
 }

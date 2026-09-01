@@ -67,7 +67,7 @@
                             <td><strong>{{ $calculation->customer_address }}</strong><small>{{ $calculation->resolved_address }}</small></td>
                             <td>{{ number_format($calculation->distance_km, 1, ',', ' ') }} км @if($calculation->durationLabel())<small>{{ $calculation->durationLabel() }}</small>@endif</td>
                             <td class="price-cell">{{ number_format($calculation->price, 0, ',', ' ') }} сом</td>
-                            <td>{{ $calculation->created_at->format('d.m.Y H:i') }}</td>
+                            <td>{{ $calculation->formattedCreatedAt() }}</td>
                         </tr>
                     @endforeach
                     </tbody>

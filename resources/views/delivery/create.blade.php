@@ -93,7 +93,7 @@
                             </div>
                         @endif
                     </div>
-                    <div class="result-meta">{{ $calculation->branch_name }} · {{ $calculation->created_at->format('d.m.Y H:i') }}</div>
+                    <div class="result-meta">{{ $calculation->branch_name }} · {{ $calculation->formattedCreatedAt() }}</div>
                 </section>
             @else
                 <section class="empty-result card">
@@ -149,7 +149,7 @@
                                     <td>{{ $item->branch_name }}</td>
                                     <td>{{ number_format($item->distance_km, 1, ',', ' ') }} км</td>
                                     <td class="price-cell">{{ number_format($item->price, 0, ',', ' ') }} сом</td>
-                                    <td>{{ $item->created_at->format('d.m.Y H:i') }}</td>
+                                    <td>{{ $item->formattedCreatedAt() }}</td>
                                 </tr>
                             @endforeach
                             </tbody>

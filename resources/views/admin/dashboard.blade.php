@@ -98,7 +98,7 @@
                                 <td>{{ $item->courier_name }}</td>
                                 <td><strong>{{ $item->customer_address }}</strong><small>{{ $item->branch_name }}</small></td>
                                 <td class="price-cell">{{ number_format($item->price, 0, ',', ' ') }} сом</td>
-                                <td>{{ $item->created_at->format('d.m H:i') }}</td>
+                                <td>{{ $item->formattedCreatedAt('d.m H:i') }}</td>
                             </tr>
                         @endforeach
                         </tbody>

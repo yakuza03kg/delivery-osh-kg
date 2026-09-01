@@ -18,7 +18,7 @@ class DashboardController extends Controller
 
     public function index(): View
     {
-        $today = now()->startOfDay();
+        $today = now(config('delivery.timezone'))->startOfDay()->utc();
 
         return view('admin.dashboard', [
             'todayCalculations' => DeliveryCalculation::query()->where('created_at', '>=', $today)->count(),

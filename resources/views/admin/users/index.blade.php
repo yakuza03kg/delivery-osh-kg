@@ -22,8 +22,8 @@
                         <tr>
                             <td><strong>{{ $user->name }}</strong></td>
                             <td>{{ $user->email }}</td>
-                            <td><span class="tag {{ $user->isSuperAdmin() ? 'tag-orange' : ($user->isAdmin() ? 'tag-purple' : 'tag-blue') }}">{{ $user->roleLabel() }}</span></td>
-                            <td>{{ $user->created_at->format('d.m.Y') }}</td>
+                            <td><span class="tag {{ $user->isAdmin() ? 'tag-purple' : 'tag-blue' }}">{{ $user->roleLabel() }}</span></td>
+                            <td>{{ $user->created_at->copy()->setTimezone(config('delivery.timezone'))->format('d.m.Y') }}</td>
                             <td class="actions-cell">
                                 <a class="button button-ghost button-small" href="{{ route('admin.users.edit', $user) }}">Изменить</a>
                                 <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Удалить этого пользователя?')">

@@ -2,6 +2,7 @@
 
 return [
     'currency' => env('DELIVERY_CURRENCY', 'KGS'),
+    'timezone' => env('DELIVERY_TIMEZONE', 'Asia/Bishkek'),
     'route_provider' => env('ROUTE_PROVIDER', '2gis'),
     'http_timeout' => (int) env('ROUTE_HTTP_TIMEOUT', 8),
     'nominatim_user_agent' => env('NOMINATIM_USER_AGENT', 'Courier KG delivery calculator'),

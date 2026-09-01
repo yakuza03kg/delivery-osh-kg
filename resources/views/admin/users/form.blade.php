@@ -13,7 +13,7 @@
         <div class="form-grid">
             <label class="field field-span-2"><span>Имя</span><input type="text" name="name" value="{{ old('name', $user->name) }}" required placeholder="Азамат"></label>
             <label class="field field-span-2"><span>Email</span><input type="email" name="email" value="{{ old('email', $user->email) }}" required placeholder="azamat@example.com"></label>
-            <label class="field"><span>Роль</span><select name="role" required><option value="courier" {{ old('role', $user->role) === 'courier' ? 'selected' : '' }}>Курьер</option><option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Администратор</option><option value="super_admin" {{ old('role', $user->role) === 'super_admin' ? 'selected' : '' }}>Супер-администратор</option></select></label>
+            <label class="field"><span>Роль</span><select name="role" required><option value="courier" {{ old('role', $user->role) === 'courier' ? 'selected' : '' }}>Курьер</option><option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Администратор</option>@if($canManageSuperAdmins)<option value="super_admin" {{ old('role', $user->role) === 'super_admin' ? 'selected' : '' }}>Управляющий</option>@endif</select></label>
             <div></div>
             <label class="field"><span>Пароль</span><input type="password" name="password" {{ $user->exists ? '' : 'required' }} autocomplete="new-password"></label>
             <label class="field"><span>Повторите пароль</span><input type="password" name="password_confirmation" {{ $user->exists ? '' : 'required' }} autocomplete="new-password"></label>
