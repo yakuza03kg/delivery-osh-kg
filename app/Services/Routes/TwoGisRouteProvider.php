@@ -3,6 +3,8 @@
 namespace App\Services\Routes;
 
 use App\Exceptions\RouteProviderException;
+use App\Models\ApiUsageCounter;
+use App\Services\Delivery\ApiUsageService;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Throwable;
@@ -14,6 +16,7 @@ final class TwoGisRouteProvider implements RouteProvider
         private readonly string $catalogUrl,
         private readonly string $routingUrl,
         private readonly int $timeout,
+        private readonly ApiUsageService $apiUsageService,
     ) {
     }
 
@@ -46,6 +49,8 @@ final class TwoGisRouteProvider implements RouteProvider
             if (! $response->successful()) {
                 throw new RouteProviderException('2GIS не принял запрос геокодирования.');
             }
+
+            $this->apiUsageService->recordTwoGisRequest(ApiUsageCounter::SERVICE_GEOCODER);
 
             $payload = $response->json();
             $item = data_get($payload, 'items.0') ?? data_get($payload, 'result.items.0');
@@ -102,6 +107,8 @@ final class TwoGisRouteProvider implements RouteProvider
             if (! $response->successful()) {
                 throw new RouteProviderException('2GIS не смог построить автомобильный маршрут.');
             }
+
+            $this->apiUsageService->recordTwoGisRequest(ApiUsageCounter::SERVICE_ROUTING);
 
             $payload = $response->json();
             $route = $this->routePayload($payload);

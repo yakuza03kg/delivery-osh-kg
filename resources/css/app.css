@@ -188,6 +188,23 @@ td small { display: block; max-width: 280px; margin-top: 3px; color: #a0a6a9; fo
 .recent-admin-card { min-width: 0; }
 .inside-card-heading { padding: 24px 23px 0; margin-bottom: 9px; }
 .inside-card-heading .text-link { margin-bottom: 4px; }
+.api-quota-card { margin-bottom: 23px; overflow: hidden; }
+.api-quota-card .inside-card-heading { padding: 24px 25px 0; }
+.quota-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin-top: 20px; background: var(--line); }
+.quota-item { padding: 22px 25px; background: #fff; }
+.quota-topline { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; color: #667078; font-size: 12px; font-weight: 700; }
+.quota-topline strong { color: var(--ink); font-size: 30px; letter-spacing: -.07em; }
+.quota-progress { height: 7px; margin-top: 15px; overflow: hidden; background: #edf0ef; border-radius: 100px; }
+.quota-progress span { display: block; height: 100%; background: linear-gradient(90deg, var(--green), #4ec39a); border-radius: inherit; }
+.quota-item p { margin-top: 9px; color: var(--muted); font-size: 12px; }
+.quota-item small { display: block; margin-top: 5px; color: #9ba2a5; font-size: 11px; }
+.quota-note { margin: 0; padding: 13px 25px; color: #788188; background: #fafaf8; border-top: 1px solid var(--line); font-size: 11px; }
+.quota-settings-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; max-width: 770px; margin: -11px 0 20px; }
+.quota-summary-card { padding: 19px; }
+.quota-summary-card strong { display: block; margin-top: 5px; color: var(--ink); font-size: 27px; letter-spacing: -.06em; }
+.quota-summary-card strong small { color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 0; }
+.quota-summary-card p { margin-top: 4px; color: var(--muted); font-size: 12px; }
+.quota-reset-row { margin-top: 20px; }
 
 .filters-card { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr 1fr auto auto; gap: 10px; align-items: end; padding: 18px; margin-bottom: 22px; }
 .compact-field { gap: 5px; }
@@ -273,6 +290,10 @@ td small { display: block; max-width: 280px; margin-top: 3px; color: #a0a6a9; fo
     .filters-card .button-dark { grid-column: 1; }
     .filters-card .button-ghost { grid-column: 2; }
     .tariff-card { align-items: flex-start; flex-direction: column; padding: 19px; }
+    .quota-grid, .quota-settings-grid { grid-template-columns: 1fr; }
+    .quota-item { padding: 19px; }
+    .api-quota-card .inside-card-heading { padding: 20px 19px 0; }
+    .quota-note { padding: 13px 19px; }
     .tariff-actions { width: 100%; justify-content: flex-start; }
     .form-grid, .form-grid-3, .form-grid-4 { grid-template-columns: 1fr; }
     .field-span-2 { grid-column: auto; }

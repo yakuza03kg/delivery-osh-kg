@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BranchController;
+use App\Http\Controllers\Admin\ApiUsageController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\TariffController;
 use App\Http\Controllers\Admin\UserController;
@@ -27,6 +28,8 @@ Route::middleware('auth')->group(function (): void {
 
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function (): void {
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('api-usage', [ApiUsageController::class, 'index'])->name('api-usage.index');
+        Route::put('api-usage', [ApiUsageController::class, 'update'])->name('api-usage.update');
         Route::resource('branches', BranchController::class)->except(['show']);
         Route::resource('tariffs', TariffController::class)->except(['show']);
         Route::resource('users', UserController::class)->except(['show']);

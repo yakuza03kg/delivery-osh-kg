@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\Routes\DemoRouteProvider;
+use App\Services\Delivery\ApiUsageService;
 use App\Services\Routes\NominatimOsrmRouteProvider;
 use App\Services\Routes\RouteProvider;
 use App\Services\Routes\TwoGisRouteProvider;
@@ -29,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
                     config('delivery.two_gis.catalog_url'),
                     config('delivery.two_gis.routing_url'),
                     config('delivery.http_timeout'),
+                    $this->app->make(ApiUsageService::class),
                 ),
             };
         });
